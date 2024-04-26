@@ -1,5 +1,3 @@
-# app.rb
-
 require 'sinatra'
 
 class ListaComprasApp < Sinatra::Base
