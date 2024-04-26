@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lista de Compras</title>
+</head>
+<body>
+  <h1>Lista de Compras</h1>
+  <ul id="lista">
+    <% @@lista_compras.each do |item| %>
+      <li><%= item %></li>
+    <% end %>
+  </ul>
+
+  <form id="formulario">
+    <input type="text" id="item" placeholder="Novo item">
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <script>
+    var source = new EventSource('/atualizar_lista');
+    source.onmessage = function(event) {
+      var item = event.data;
+      var lista = document.getElementById('lista');
+      var newItem = document.createElement('li');
+      newItem.textContent = item;
+      lista.appendChild(newItem);
+    };
+
+    document.getElementById('formulario').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var item = document.getElementById('item').value;
+      fetch('/adicionar_item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'item=' + encodeURIComponent(item)
+      });
+      document.getElementById('item').value = '';
+    });
+  </script>
+</body>
+</html>
